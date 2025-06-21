@@ -1,0 +1,84 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+node_modules
+dist
+dist-ssr
+*.local
+
+
+
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+.env
+
+
+# === General ===
+node_modules/
+dist/
+dist-ssr/
+.env
+*.env.local
+*.log
+logs/
+*.tmp
+node_modules
+# === Build outputs ===
+build/
+out/
+coverage/
+.cache/
+.next/
+
+node_modules/
+
+# === System ===
+.DS_Store
+Thumbs.db
+
+# === IDEs and Editors ===
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# === npm/yarn/pnpm logs ===
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# === Git ===
+.git/
+
+# === Frontend ===
+Frontend/node_modules/
+Frontend/.env
+Frontend/.next/
+Frontend/.cache/
+Frontend/dist/
+Frontend/build/
+
+# === Backend ===
+Backend/node_modules/
+Backend/.env
+Backend/logs/
+Backend/dist/
+Backend/build/
