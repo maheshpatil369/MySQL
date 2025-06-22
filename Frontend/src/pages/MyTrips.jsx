@@ -12,16 +12,16 @@ import {
   Plus,
   Filter,
   Search,
-  AlertCircle, // For error messages
-  Loader2, // For loading state
-  Plane, Train, Car, Utensils, Mountain, Camera, Waves, Music, Heart // For interests icons
+  AlertCircle, 
+  Loader2, 
+  Plane, Train, Car, Utensils, Mountain, Camera, Waves, Music, Heart 
 } from 'lucide-react';
 import Layout from '../components/layout/Layout';
 import { useAuth } from '../contexts/AuthContext';
-import { Link } from 'react-router-dom'; // For "New Trip" button
-import travelImage from '../components/images/travel.jpg'; // Import the travel image
+import { Link } from 'react-router-dom'; 
+import travelImage from '../components/images/travel.jpg'; 
 
-const API_EVENTS_URL = `${import.meta.env.VITE_API_URL || 'http://localhost:3001/api'}/events`; // Changed to /events
+const API_EVENTS_URL = `${import.meta.env.VITE_API_URL || 'http://localhost:3001/api'}/events`; 
 
 const interestIcons = {
   food: Utensils,
@@ -39,20 +39,20 @@ const MyTrips = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [fetchError, setFetchError] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
-  const [filterStatus, setFilterStatus] = useState('all'); // 'all', 'upcoming', 'active', 'completed'
+  const [filterStatus, setFilterStatus] = useState('all'); 
 
   useEffect(() => {
     const fetchTrips = async () => {
       if (!token) {
         setIsLoading(false);
         setFetchError("Not authenticated. Please log in.");
-        setMyTrips([]); // Clear trips if not authenticated
+        setMyTrips([])
         return;
       }
       setIsLoading(true);
       setFetchError(null);
       try {
-        const response = await fetch(API_EVENTS_URL, { // Changed to API_EVENTS_URL
+        const response = await fetch(API_EVENTS_URL, { 
           headers: {
             'x-auth-token': token,
           },
@@ -61,39 +61,32 @@ const MyTrips = () => {
         if (!response.ok) {
           let errorMsg = `Failed to fetch trips: ${response.status} ${response.statusText}`;
           try {
-            // Attempt to get more specific error message from JSON response
             const errorData = await response.json();
             errorMsg = errorData.msg || errorData.error || errorMsg;
           } catch (jsonError) {
-            // If the error response isn't JSON, or another error occurs parsing it,
-            // stick with the HTTP status error.
             console.error("Could not parse error response as JSON:", jsonError);
-            // We could also try response.text() here if needed for non-JSON errors
           }
           throw new Error(errorMsg);
         }
 
         const data = await response.json();
-        // Map backend event fields to frontend trip fields if necessary
         const mappedData = data.map(event => ({
           id: event.id,
-          start_city: event.title.split(' to ')[0]?.replace('Trip from ', '') || 'N/A', // Attempt to parse from title
-          end_city: event.location || event.title.split(' to ')[1] || 'N/A', // Use location or parse from title
-          start_date: event.start, // Assuming backend sends 'start'
-          end_date: event.end,     // Assuming backend sends 'end'
+          start_city: event.title.split(' to ')[0]?.replace('Trip from ', '') || 'N/A', 
+          end_city: event.location || event.title.split(' to ')[1] || 'N/A', 
+          start_date: event.start, 
+          end_date: event.end,     
           travelers: parseInt(event.description?.match(/Travelers: (\d+)/)?.[1]) || 0,
           interests: event.description?.match(/Interests: ([\w\s,]+)\./)?.[1]?.split(', ') || [],
           travel_option_name: event.description?.match(/Travel by ([\w\s]+) \(/)?.[1] || 'Not specified',
           travel_option_price: event.description?.match(/\(Price: (\$[\d,.]+)\)/)?.[1] || null,
-          distance: event.distance, // Added distance
-          // Add other fields as needed, or adjust parsing from description
+          distance: event.distance, 
         }));
         setMyTrips(mappedData);
       } catch (error) {
-        // This will catch network errors (fetch promise rejected)
-        // or errors thrown from the !response.ok block.
+       
         setFetchError(error.message || "An unknown error occurred while fetching trips.");
-        setMyTrips([]); // Clear trips on error
+        setMyTrips([]); 
       } finally {
         setIsLoading(false);
       }
@@ -106,24 +99,23 @@ const MyTrips = () => {
     const now = new Date();
     const start = new Date(startDateStr);
     const end = new Date(endDateStr);
-    end.setHours(23, 59, 59, 999); // Consider end of day for end date
+    end.setHours(23, 59, 59, 999); 
 
     if (now > end) return 'completed';
     if (now >= start && now <= end) return 'active';
     if (now < start) return 'upcoming';
-    return 'unknown'; // Should not happen with valid dates
+    return 'unknown'; 
   };
   
   const filteredTrips = myTrips.filter(trip => {
     const tripStatus = getTripStatus(trip.start_date, trip.end_date);
     const searchLower = searchTerm.toLowerCase();
-    // Ensure all fields being searched are strings
     const matchesSearch =
       (String(trip.start_city)?.toLowerCase() || '').includes(searchLower) ||
       (String(trip.end_city)?.toLowerCase() || '').includes(searchLower) ||
       (String(trip.travel_option_name)?.toLowerCase() || '').includes(searchLower) ||
       (trip.interests?.some(interest => String(interest)?.toLowerCase().includes(searchLower))) ||
-      (String(trip.distance)?.includes(searchLower)); // Search by distance
+      (String(trip.distance)?.includes(searchLower)); 
 
     const matchesFilter = filterStatus === 'all' || tripStatus === filterStatus;
     return matchesSearch && matchesFilter;
@@ -227,9 +219,9 @@ const MyTrips = () => {
               const tripStatus = getTripStatus(trip.start_date, trip.end_date);
               const InterestIcon = trip.interests && trip.interests.length > 0 && interestIcons[trip.interests[0].toLowerCase()]
                                    ? interestIcons[trip.interests[0].toLowerCase()]
-                                   : MapPin; // Default icon
+                                   : MapPin; 
              
-             const cardImage = travelImage; // Use the imported travel image
+             const cardImage = travelImage; 
 
              return (
                <motion.div
@@ -288,7 +280,7 @@ const MyTrips = () => {
                       )}
                       {trip.distance !== null && trip.distance !== undefined && (
                         <div className="flex items-center">
-                           <MapPin className="h-4 w-4 mr-2 flex-shrink-0 text-gray-500" /> {/* Example icon */}
+                           <MapPin className="h-4 w-4 mr-2 flex-shrink-0 text-gray-500" /> 
                           Distance: {trip.distance} km
                         </div>
                       )}

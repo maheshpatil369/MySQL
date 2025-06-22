@@ -8,14 +8,13 @@ import Dashboard from './pages/Dashboard';
 import PlanTrip from './pages/PlanTrip';
 import MyTrips from './pages/MyTrips';
 import Team from './pages/Team';
-// import Chat from './pages/Chat'; // Removed Chat page import
 import Explore from './pages/Explore';
 import Calendar from './pages/Calendar';
 import Announcements from './pages/Announcements';
 import Settings from './pages/Settings';
-import HomePage from './pages/Home'; // Added import for HomePage
-import ExpenseTracker from './pages/ExpenseTracker'; // Import ExpenseTracker
-import Maps from './pages/Maps'; // Import Maps
+import HomePage from './pages/Home'; 
+import ExpenseTracker from './pages/ExpenseTracker'; 
+import Maps from './pages/Maps'; 
 
 const ProtectedRoute = ({ children }) => {
   const { user, isLoading } = useAuth();
@@ -74,11 +73,7 @@ const appRoutes = [
     path: "/team",
     element: <ProtectedRoute><Team /></ProtectedRoute>,
   },
-  // Removed Chat route
-  // {
-  //   path: "/chat",
-  //   element: <ProtectedRoute><Chat /></ProtectedRoute>,
-  // },
+  
   {
     path: "/explore",
     element: <ProtectedRoute><Explore /></ProtectedRoute>,
@@ -92,7 +87,7 @@ const appRoutes = [
     element: <ProtectedRoute><Announcements /></ProtectedRoute>,
   },
   {
-    path: "/expense-tracker", // New route for Expense Tracker
+    path: "/expense-tracker", 
     element: <ProtectedRoute><ExpenseTracker /></ProtectedRoute>,
   },
   {

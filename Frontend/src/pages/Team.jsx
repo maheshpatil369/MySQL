@@ -27,10 +27,10 @@ const Team = () => {
       id: 1,
       name: 'Sarah Johnson',
       email: 'sarah.johnson@email.com',
-      role: 'Leader', // Changed from admin
+      role: 'Leader', 
       avatar: 'https://images.pexels.com/photos/3785079/pexels-photo-3785079.jpeg?auto=compress&cs=tinysrgb&w=150',
       age: 28,
-      location: 'San Francisco', // Changed to city name
+      location: 'San Francisco', 
       joinedAt: '2023-01-15',
       tripsCount: 12,
       status: 'online',
@@ -45,7 +45,7 @@ const Team = () => {
       role: 'member',
       avatar: 'https://images.pexels.com/photos/3777931/pexels-photo-3777931.jpeg?auto=compress&cs=tinysrgb&w=150',
       age: 32,
-      location: 'New York', // Changed to city name
+      location: 'New York', 
       joinedAt: '2023-02-20',
       tripsCount: 8,
       status: 'online',
@@ -60,7 +60,7 @@ const Team = () => {
       role: 'member',
       avatar: 'https://images.pexels.com/photos/3823488/pexels-photo-3823488.jpeg?auto=compress&cs=tinysrgb&w=150',
       age: 26,
-      location: 'Austin', // Changed to city name
+      location: 'Austin', 
       joinedAt: '2023-03-10',
       tripsCount: 15,
       status: 'away',
@@ -75,7 +75,7 @@ const Team = () => {
       role: 'member',
       avatar: 'https://images.pexels.com/photos/3785077/pexels-photo-3785077.jpeg?auto=compress&cs=tinysrgb&w=150',
       age: 30,
-      location: 'Seattle', // Changed to city name
+      location: 'Seattle', 
       joinedAt: '2023-04-05',
       tripsCount: 6,
       status: 'offline',
@@ -90,7 +90,7 @@ const Team = () => {
       role: 'member',
       avatar: 'https://images.pexels.com/photos/3823489/pexels-photo-3823489.jpeg?auto=compress&cs=tinysrgb&w=150',
       age: 29,
-      location: 'Miami', // Changed to city name
+      location: 'Miami', // Changed to 
       joinedAt: '2023-05-12',
       tripsCount: 10,
       status: 'online',
@@ -100,7 +100,6 @@ const Team = () => {
     }
   ]);
 
-  // State for the new member form
   const [newMemberName, setNewMemberName] = useState('');
   const [newMemberAge, setNewMemberAge] = useState('');
   const [newMemberMobile, setNewMemberMobile] = useState('');
@@ -123,16 +122,15 @@ const Team = () => {
       location: newMemberLocationCity,
       email: newMemberEmail,
       role: newMemberRole,
-      avatar: defaultAvatar, // Use imported default avatar
+      avatar: defaultAvatar,
       joinedAt: new Date().toISOString().split('T')[0],
       tripsCount: 0,
       status: 'offline',
-      bio: newMemberComments || 'Newly added member.', // Use comments for bio
+      bio: newMemberComments || 'Newly added member.', 
       interests: []
     };
     setTeamMembers(prevMembers => [...prevMembers, newMember]);
     console.log("New Member Added:", newMember);
-    // Reset form and close modal
     setNewMemberName('');
     setNewMemberAge('');
     setNewMemberMobile('');

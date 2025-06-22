@@ -20,25 +20,23 @@ import {
   Utensils,
   Music,
   Waves,
-  AlertCircle, // Added for error display
-  CheckCircle, // Added for success display
+  AlertCircle, 
+  CheckCircle, 
   X
 } from 'lucide-react';
 import Layout from '../components/layout/Layout';
 import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
-import { useAuth } from '../contexts/AuthContext'; // Import useAuth
+import { useAuth } from '../contexts/AuthContext'; 
 
-const API_EVENTS_URL = `${import.meta.env.VITE_API_URL || 'http://localhost:3001/api'}/events`; // Changed to /events
+const API_EVENTS_URL = `${import.meta.env.VITE_API_URL || 'http://localhost:3001/api'}/events`; 
 
-// Helper function to convert degrees to radians
 function deg2rad(deg) {
   return deg * (Math.PI / 180);
 }
 
-// Function to calculate distance between two lat/lon points in kilometers
 function getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2) {
-  const R = 6371; // Earth's radius in kilometers
+  const R = 6371; 
   const dLat = deg2rad(lat2 - lat1);
   const dLon = deg2rad(lon2 - lon1);
 
@@ -48,13 +46,13 @@ function getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2) {
     Math.sin(dLon / 2) * Math.sin(dLon / 2);
 
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-  const distance = R * c; // Distance in km
-  return Math.round(distance); // Return rounded to nearest km
+  const distance = R * c; 
+  return Math.round(distance); 
 }
 
 
 const PlanTrip = () => {
-  const { token } = useAuth(); // Get auth token
+  const { token } = useAuth(); 
   const [startCity, setStartCity] = useState('');
   const [endCity, setEndCity] = useState('');
   const [error, setError] = useState('');
@@ -63,16 +61,14 @@ const PlanTrip = () => {
   const [travelers, setTravelers] = useState(2);
   const [selectedInterests, setSelectedInterests] = useState([]);
   const [currentStep, setCurrentStep] = useState(1);
-  const [selectedTravelOption, setSelectedTravelOption] = useState(null); // State for selected travel option
-  const [dynamicTravelOptions, setDynamicTravelOptions] = useState([]); // State for travel options with dynamic prices
+  const [selectedTravelOption, setSelectedTravelOption] = useState(null); 
+  const [dynamicTravelOptions, setDynamicTravelOptions] = useState([]); 
 
-  // City search/dropdown states
   const [showStartDropdown, setShowStartDropdown] = useState(false);
   const [filteredStartCities, setFilteredStartCities] = useState([]);
   const [showEndDropdown, setShowEndDropdown] = useState(false);
   const [filteredEndCities, setFilteredEndCities] = useState([]);
-  const [distance, setDistance] = useState(null); // State for distance
-  // Removed unused: searchTerm, filteredCities, showDropdown
+  const [distance, setDistance] = useState(null); 
 
   // API call states
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -92,7 +88,7 @@ const PlanTrip = () => {
   const baseTravelOptions = [
     { type: 'flight', icon: Plane, name: 'Flight', costPerKm: 8, duration: '3h 45m', color: 'bg-blue-500' },
     { type: 'train', icon: Train, name: 'Train', costPerKm: 2.5, duration: '8h 30m', color: 'bg-green-500' },
-    { type: 'car', icon: Car, name: 'Car Rental', costPerKm: 12, duration: '6h 15m', color: 'bg-purple-500' }, // Assuming 12 is per KM for the vehicle, then multiplied by travelers
+    { type: 'car', icon: Car, name: 'Car Rental', costPerKm: 12, duration: '6h 15m', color: 'bg-purple-500' },
   ];
 
   useEffect(() => {
@@ -103,14 +99,13 @@ const PlanTrip = () => {
       });
       setDynamicTravelOptions(updatedOptions);
     } else {
-      // Set default prices or indicate that distance/travelers are needed
       const defaultOptions = baseTravelOptions.map(option => ({
         ...option,
         price: 'N/A (Select cities & travelers)'
       }));
       setDynamicTravelOptions(defaultOptions);
     }
-  }, [distance, travelers, startCity, endCity]); // Added startCity, endCity to re-evaluate if they become unselected
+  }, [distance, travelers, startCity, endCity]); 
 
   const toggleInterest = (interestId) => {
     setSelectedInterests(prev => 
@@ -130,23 +125,22 @@ const PlanTrip = () => {
 
   const handleSelectTravelOption = (option) => {
     setSelectedTravelOption(option);
-    setSubmitError(null); // Clear previous errors
+    setSubmitError(null); 
   };
 
   const handleCreateTrip = async () => {
-    if (currentStep !== 4 && currentStep !== 5) return; // Only submit on step 4 or 5 (if we make step 5 a review)
+    if (currentStep !== 4 && currentStep !== 5) return;
     if (!selectedTravelOption && currentStep === 4) {
         setSubmitError("Please select a travel option before proceeding.");
         return;
     }
-    if (currentStep === 4) { // If on travel options, move to confirmation
+    if (currentStep === 4) { 
         setCurrentStep(5);
         setSubmitError(null);
         return;
     }
 
 
-    // All checks for final submission on step 5
     if (!startCity || !endCity || !startDate || !endDate || travelers < 1 || !selectedTravelOption) {
       setSubmitError('Please ensure all fields are filled and a travel option is selected.');
       return;
@@ -162,7 +156,6 @@ const PlanTrip = () => {
       eventDescription += ` Interests: ${selectedInterests.join(', ')}.`;
     }
     if (selectedTravelOption) {
-      // Ensure selectedTravelOption contains the dynamically calculated price
       const currentSelectedOptionDetails = dynamicTravelOptions.find(opt => opt.type === selectedTravelOption.type) || selectedTravelOption;
       eventDescription += ` Travel by ${currentSelectedOptionDetails.name} (Duration: ${currentSelectedOptionDetails.duration}, Price: ${currentSelectedOptionDetails.price}).`;
     }
@@ -174,20 +167,19 @@ const PlanTrip = () => {
       allDay: false,
       description: eventDescription,
       location: endCity,
-      distance: distance, // Include distance
+      distance: distance, 
     };
 
-    // Log the data being sent to the backend for debugging
     console.log("Frontend: Preparing to send eventData:", JSON.stringify(eventData, null, 2));
 
     try {
-      const response = await fetch(API_EVENTS_URL, { // Changed to API_EVENTS_URL
+      const response = await fetch(API_EVENTS_URL, { 
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'x-auth-token': token,
         },
-        body: JSON.stringify(eventData), // Changed to eventData
+        body: JSON.stringify(eventData), 
       });
 
       const responseData = await response.json();
@@ -197,10 +189,7 @@ const PlanTrip = () => {
       }
 
       setSubmitSuccess(true);
-      // Optionally reset form or navigate
-      // For now, just show success and maybe disable further edits or reset step
-      // setCurrentStep(1);
-      // setStartCity(''); setEndCity(''); setStartDate(null); setEndDate(null); setTravelers(2); setSelectedInterests([]); setSelectedTravelOption(null);
+    
     } catch (error) {
       setSubmitError(error.message);
     } finally {
@@ -208,13 +197,11 @@ const PlanTrip = () => {
     }
   };
   
-  // Reset success/error messages when step changes
   useEffect(() => {
     setSubmitError(null);
     setSubmitSuccess(false);
   }, [currentStep]);
 
-  // Calculate distance when startCity or endCity changes
   useEffect(() => {
     if (startCity && endCity && startCity !== endCity) {
       const city1 = cities.find(c => c.name === startCity);
@@ -224,10 +211,10 @@ const PlanTrip = () => {
         const dist = getDistanceFromLatLonInKm(city1.lat, city1.lon, city2.lat, city2.lon);
         setDistance(dist);
       } else {
-        setDistance(null); // Reset if city data or coordinates are missing
+        setDistance(null); 
       }
     } else {
-      setDistance(null); // Reset distance if cities are not valid or same
+      setDistance(null); 
     }
   }, [startCity, endCity]);
 
@@ -417,7 +404,7 @@ const PlanTrip = () => {
               }
             }
           }}
-          onBlur={() => setTimeout(() => setShowStartDropdown(false), 150)} // Hide on blur with a slight delay
+          onBlur={() => setTimeout(() => setShowStartDropdown(false), 150)} 
           placeholder="Enter departure city"
           className="w-full pl-10 pr-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
         />
@@ -427,7 +414,7 @@ const PlanTrip = () => {
               <li
                 key={city.id}
                 className="px-4 py-2 cursor-pointer hover:bg-blue-100 dark:hover:bg-gray-700"
-                onMouseDown={() => { // Use onMouseDown
+                onMouseDown={() => { 
                   setStartCity(city.name);
                   setShowStartDropdown(false);
                 }}
@@ -459,7 +446,7 @@ const PlanTrip = () => {
               );
               setShowEndDropdown(true);
             } else {
-              setFilteredEndCities([]); // Clear suggestions if input is empty
+              setFilteredEndCities([]); 
               setShowEndDropdown(false);
             }
           }}
@@ -472,7 +459,7 @@ const PlanTrip = () => {
               }
             }
           }}
-          onBlur={() => setTimeout(() => setShowEndDropdown(false), 150)} // Hide on blur with a slight delay
+          onBlur={() => setTimeout(() => setShowEndDropdown(false), 150)} 
           placeholder="Enter destination city"
           className="w-full pl-10 pr-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
         />
@@ -482,7 +469,7 @@ const PlanTrip = () => {
               <li
                 key={city.id}
                 className="px-4 py-2 cursor-pointer hover:bg-blue-100 dark:hover:bg-gray-700"
-                onMouseDown={() => { // Use onMouseDown
+                onMouseDown={() => { 
                   setEndCity(city.name);
                   setShowEndDropdown(false);
                 }}

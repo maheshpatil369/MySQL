@@ -17,9 +17,9 @@ import {
   Lock,
   Eye,
   EyeOff,
-  AlertCircle, // For error messages
-  CheckCircle, // For success messages
-  Loader2 // For loading state
+  AlertCircle, 
+  CheckCircle, 
+  Loader2 
 } from 'lucide-react';
 import Layout from '../components/layout/Layout';
 import { useAuth } from '../contexts/AuthContext';
@@ -29,23 +29,21 @@ import defaultAvatar from '../components/images/default-avatar-icon-of-social-me
 const API_PROFILE_URL = `${import.meta.env.VITE_API_URL || 'http://localhost:3001/api'}/auth/profile`;
 
 const Settings = () => {
-  const { user, token, setUser, setToken: setAuthToken } = useAuth(); // Get token, setUser, setAuthToken
+  const { user, token, setUser, setToken: setAuthToken } = useAuth(); 
   const { isDark, toggleTheme } = useTheme();
   const [activeTab, setActiveTab] = useState('profile');
   
   // Profile Tab State
   const [name, setName] = useState(user?.name || '');
-  // Add other profile fields here if needed, e.g., email, phone
   const [isUpdatingProfile, setIsUpdatingProfile] = useState(false);
   const [profileUpdateError, setProfileUpdateError] = useState(null);
   const [profileUpdateSuccess, setProfileUpdateSuccess] = useState(null);
 
-  const [showPassword, setShowPassword] = useState(false); // For password change section
+  const [showPassword, setShowPassword] = useState(false); 
 
   useEffect(() => {
     if (user) {
       setName(user.name || '');
-      // Set other fields if they exist, e.g., setEmail(user.email || '');
     }
   }, [user]);
 
@@ -66,7 +64,7 @@ const Settings = () => {
           'Content-Type': 'application/json',
           'x-auth-token': token,
         },
-        body: JSON.stringify({ name: name.trim() }), // Send only name for now
+        body: JSON.stringify({ name: name.trim() }), 
       });
 
       const responseData = await response.json();
@@ -75,9 +73,8 @@ const Settings = () => {
         throw new Error(responseData.msg || 'Failed to update profile.');
       }
       
-      // Update user in AuthContext and localStorage
       setUser(responseData.user);
-      setAuthToken(responseData.token); // This should also update localStorage via AuthContext
+      setAuthToken(responseData.token); 
       
       setProfileUpdateSuccess('Profile updated successfully!');
     } catch (err) {
@@ -174,7 +171,6 @@ const Settings = () => {
                         whileHover={{ scale: 1.1 }}
                         whileTap={{ scale: 0.9 }}
                         className="absolute bottom-0 right-0 p-2 bg-blue-600 text-white rounded-full shadow-lg hover:bg-blue-700 transition-colors"
-                        // onClick={() => {/* Implement photo change logic */}}
                       >
                         <Camera className="h-4 w-4" />
                       </motion.button>
