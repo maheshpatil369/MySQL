@@ -1,9 +1,9 @@
 import React, { useEffect, useRef } from 'react';
-import Layout from '../components/layout/Layout.jsx'; // Layout with sidebar/header
+import Layout from '../components/layout/Layout.jsx'; 
 
 const Maps = () => {
   const mapRef = useRef(null);
-  const apiKey = "AIzaSyDiyfxTxJCt4ZgVnkblMoZkIS1-VO3j6yE"; // Your actual API Key
+  const apiKey = "AIzaSyDiyfxTxJCt4ZgVnkblMoZkIS1-VO3j6yE"; 
 
   useEffect(() => {
     const initMap = () => {
@@ -55,7 +55,7 @@ const Maps = () => {
         <div
           ref={mapRef}
           className="w-full rounded-md shadow"
-          style={{ height: '500px' }} // Set fixed height or use h-[500px] via Tailwind
+          style={{ height: '500px' }} 
         />
       </div>
     </Layout>

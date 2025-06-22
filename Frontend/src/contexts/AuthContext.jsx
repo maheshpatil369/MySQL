@@ -14,11 +14,10 @@ export const useAuth = () => {
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-  const [token, setToken] = useState(null); // Initialize token to null
-  const [isLoading, setIsLoading] = useState(false); // Set isLoading to false initially as we are not loading from localStorage
+  const [token, setToken] = useState(null); 
+  const [isLoading, setIsLoading] = useState(false); 
   const [error, setError] = useState(null);
 
-  // useEffect to load from localStorage is removed to prevent session persistence
 
   const login = async (email, password) => {
     setIsLoading(true);
@@ -39,8 +38,6 @@ export const AuthProvider = ({ children }) => {
 
       setUser(data.user);
       setToken(data.token);
-      // localStorage.setItem('user', JSON.stringify(data.user)); // Do not save to localStorage
-      // localStorage.setItem('token', data.token); // Do not save to localStorage
       return { success: true };
     } catch (err) {
       setError(err.message);
@@ -59,7 +56,7 @@ export const AuthProvider = ({ children }) => {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ name, email, password }), // ✅ Correct key
+      body: JSON.stringify({ name, email, password }), 
     });
     const data = await response.json();
 
@@ -69,13 +66,11 @@ export const AuthProvider = ({ children }) => {
 
     setUser(data.user);
     setToken(data.token);
-    // localStorage.setItem('user', JSON.stringify(data.user)); // Do not save to localStorage
-    // localStorage.setItem('token', data.token); // Do not save to localStorage
     return { success: true };
   } catch (err) {
-    console.error('Registration fetch error:', err); // More detailed logging
+    console.error('Registration fetch error:', err); 
     setError(err.message);
-    return { success: false, message: err.message, errorDetail: err }; // Include full error
+    return { success: false, message: err.message, errorDetail: err }; 
   } finally {
     setIsLoading(false);
   }
@@ -85,8 +80,6 @@ export const AuthProvider = ({ children }) => {
   const logout = () => {
     setUser(null);
     setToken(null);
-    // localStorage.removeItem('user'); // No longer strictly needed as we don't save
-    // localStorage.removeItem('token'); // No longer strictly needed
   };
 
   const value = {

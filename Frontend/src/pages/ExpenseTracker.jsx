@@ -18,7 +18,7 @@ const ExpenseTracker = () => {
   // Form state
   const [description, setDescription] = useState('');
   const [amount, setAmount] = useState('');
-  const [type, setType] = useState('debit'); // 'debit' or 'credit'
+  const [type, setType] = useState('debit'); 
   const [expenseDate, setExpenseDate] = useState(new Date());
   const [category, setCategory] = useState('');
   const [selectedTripId, setSelectedTripId] = useState('');
@@ -37,7 +37,6 @@ const ExpenseTracker = () => {
         const errorData = await response.json();
         errorMsg = errorData.msg || errorData.error || errorMsg;
       } catch (jsonError) {
-        // console.error(`Could not parse error response for ${itemName} as JSON:`, jsonError);
       }
       throw new Error(errorMsg);
     }

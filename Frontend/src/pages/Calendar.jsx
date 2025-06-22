@@ -13,12 +13,12 @@ import {
   Filter,
   Download,
   Share2,
-  Edit3, // For editing marks
-  Lock,  // For locking marks
-  Unlock // For unlocking marks
+  Edit3, 
+  Lock,  
+  Unlock 
 } from 'lucide-react';  
 import Layout from '../components/layout/Layout.jsx';
-import { useAuth } from '../contexts/AuthContext.jsx'; // Import useAuth
+import { useAuth } from '../contexts/AuthContext.jsx'; 
 
 const Calendar = () => {
   const [currentDate, setCurrentDate] = useState(new Date());
@@ -28,23 +28,22 @@ const Calendar = () => {
   const [markText, setMarkText] = useState('');
   const [isEditingMark, setIsEditingMark] = useState(false);
  
-  // Add Event Modal State
   const [isAddEventModalOpen, setIsAddEventModalOpen] = useState(false);
   const [newEventTitle, setNewEventTitle] = useState('');
   const [newEventStartDate, setNewEventStartDate] = useState(null);
   const [newEventEndDate, setNewEventEndDate] = useState(null);
-  const [newEventStartTime, setNewEventStartTime] = useState(''); // Format HH:mm
-  const [newEventEndTime, setNewEventEndTime] = useState('');   // Format HH:mm
+  const [newEventStartTime, setNewEventStartTime] = useState(''); 
+  const [newEventEndTime, setNewEventEndTime] = useState('');  
   const [newEventLocation, setNewEventLocation] = useState('');
   const [newEventDescription, setNewEventDescription] = useState('');
   const [newEventError, setNewEventError] = useState(null);
   const [isSubmittingNewEvent, setIsSubmittingNewEvent] = useState(false);
 
 
-  const [events, setEvents] = useState([]); // Will be populated from API
+  const [events, setEvents] = useState([]); 
   const [isLoadingEvents, setIsLoadingEvents] = useState(true);
   const [fetchEventsError, setFetchEventsError] = useState(null);
-  const { token } = useAuth(); // token might still be used for fetching trip events
+  const { token } = useAuth(); 
  
   const API_TRIP_EVENTS_URL = `${import.meta.env.VITE_API_URL || 'http://localhost:3001/api'}/events`;
   const LOCAL_STORAGE_MARKS_KEY = 'calendarUserMarks';
@@ -57,30 +56,26 @@ CALSCALE:GREGORIAN
 `;
 
     events.forEach(event => {
-      // Ensure date and time are valid before processing
-      const startDate = event.date; // YYYY-MM-DD
-      const startTime = event.time; // HH:mm
+      const startDate = event.date; 
+      const startTime = event.time; 
       
       let startDateTimeISO = '';
       if (startDate && startTime) {
         const [year, month, day] = startDate.split('-');
         const [hours, minutes] = startTime.split(':');
-        // Note: JavaScript months are 0-indexed, so month-1
         const jsDate = new Date(Date.UTC(year, month - 1, day, hours, minutes));
         if (!isNaN(jsDate)) {
             startDateTimeISO = jsDate.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
         }
-      } else if (startDate) { // Handle all-day event if only date is present
+      } else if (startDate) { 
         const [year, month, day] = startDate.split('-');
         const jsDate = new Date(Date.UTC(year, month - 1, day));
          if (!isNaN(jsDate)) {
-            startDateTimeISO = `${year}${month}${day}`; // Format for all-day
+            startDateTimeISO = `${year}${month}${day}`; 
         }
       }
 
-      // Attempt to calculate end time based on duration if not directly available as full end datetime
-      // This is a simplified approach; a proper end datetime from source is better.
-      let endDateTimeISO = startDateTimeISO; // Default to start if no duration or end time
+       let endDateTimeISO = startDateTimeISO; // Default to start if no duration or end time
       if (startDateTimeISO && event.duration && event.duration !== 'N/A' && !startDateTimeISO.includes('T')) { // All day event, duration might not apply like this
           // For all-day events, duration usually means it spans multiple days or is just for that day.
           // If it's an all-day event, DTEND is often the day AFTER.
@@ -109,7 +104,7 @@ CALSCALE:GREGORIAN
       }
 
 
-      if (!startDateTimeISO) return; // Skip if no valid start date/time
+      if (!startDateTimeISO) return;
 
       icsString += `BEGIN:VEVENT
 UID:${event.id}@planpal.pro
@@ -123,7 +118,6 @@ END:VEVENT
 `;
     });
 
-    // Add custom marks as VTODO items (optional, can be complex to map to calendar events)
     Object.entries(customMarks).forEach(([dateString, mark]) => {
         const [year, month, day] = dateString.split('-');
         const dt = `${year}${month}${day}`;
@@ -203,16 +197,11 @@ END:VTODO
 
     const eventData = {
       title: newEventTitle.trim(),
-      start: startDateTime.toISOString(), // Backend expects full ISO string for start/end
-      end: endDateTime.toISOString(),     // if these are treated as specific times
+      start: startDateTime.toISOString(), 
+      end: endDateTime.toISOString(),     
       location: newEventLocation.trim() || null,
       description: newEventDescription.trim() || null,
-      // Assuming 'allDay' is false for events with specific times.
-      // If your backend handles 'start_time' and 'end_time' separately from date, adjust accordingly.
-      // For now, I'm assuming the backend /api/events endpoint can take 'start' and 'end' ISO strings.
-      // If it expects 'start_date', 'end_date', 'start_time', 'end_time', this needs adjustment.
-      // Based on existing event mapping, it seems 'start' and 'end' ISO strings are used.
-    };
+     };
 
     try {
       const response = await fetch(API_TRIP_EVENTS_URL, {
@@ -232,7 +221,7 @@ END:VTODO
       // Success
       setIsAddEventModalOpen(false);
       resetNewEventForm();
-      fetchCalendarEvents(); // Refresh events list
+      fetchCalendarEvents(); 
     } catch (error) {
       setNewEventError(error.message || "An unexpected error occurred.");
     } finally {
@@ -240,7 +229,6 @@ END:VTODO
     }
   };
 
- // Effect to load custom marks from localStorage on mount
  useEffect(() => {
    const storedMarks = localStorage.getItem(LOCAL_STORAGE_MARKS_KEY);
    if (storedMarks) {
@@ -253,22 +241,18 @@ END:VTODO
    }
  }, []);
 
- // Effect to save custom marks to localStorage whenever they change
  useEffect(() => {
-   // Only save if customMarks is not in its initial empty state, to avoid overwriting on first load before hydration
    if (Object.keys(customMarks).length > 0 || localStorage.getItem(LOCAL_STORAGE_MARKS_KEY)) {
        localStorage.setItem(LOCAL_STORAGE_MARKS_KEY, JSON.stringify(customMarks));
    }
  }, [customMarks]);
 
 
- // Fetch trip events (existing logic, kept separate from custom marks)
  useEffect(() => {
    const fetchCalendarEvents = async () => {
      if (!token) {
        setEvents([]);
        setIsLoadingEvents(false);
-       // Keep fetchEventsError for trip events, not for local marks
        setFetchEventsError("Not authenticated. Please log in to see trip events.");
        return;
      }
@@ -380,7 +364,7 @@ END:VTODO
       }
       return newMarks;
     });
-    setIsEditingMark(false); // Exit editing mode
+    setIsEditingMark(false);
     console.log('Mark operation for', dateString, 'Text:', textToSave || "(deleted)");
   };
   
@@ -397,36 +381,26 @@ END:VTODO
     const dateString = selectedDate.toISOString().split('T')[0];
     const mark = customMarks[dateString];
 
-    if (mark) { // Only toggle lock if mark exists
+    if (mark) {
       setCustomMarks(prevMarks => ({
         ...prevMarks,
         [dateString]: { ...mark, locked: !mark.locked }
       }));
       console.log('Mark lock toggled for', dateString);
     } else {
-      // Optionally, create a new, empty, locked mark if one doesn't exist
-      // For now, we only toggle lock on existing marks.
-      // If you want to create a new locked mark:
-      // setCustomMarks(prevMarks => ({
-      //   ...prevMarks,
-      //   [dateString]: { id: Date.now().toString(), text: '', locked: true }
-      // }));
-      // setMarkText(''); // Clear input as it's a new locked mark
-      // setIsEditingMark(false);
-      console.log('No mark to toggle lock for', dateString);
+       console.log('No mark to toggle lock for', dateString);
     }
   };
   
-  // When a date is selected, populate the markText input if a mark exists
   React.useEffect(() => {
     if (selectedDate) {
       const mark = getMarkForDate(selectedDate);
       if (mark) {
         setMarkText(mark.text);
-        setIsEditingMark(false); // Default to view mode when selecting a new date with a mark
+        setIsEditingMark(false); 
       } else {
-        setMarkText(''); // Clear if no mark
-        setIsEditingMark(true); // Default to edit mode for a new mark
+        setMarkText('');
+        setIsEditingMark(true); 
       }
     } else {
       setMarkText('');
@@ -504,7 +478,7 @@ END:VTODO
               whileTap={{ scale: 0.95 }}
               className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
               onClick={() => {
-                setNewEventStartDate(selectedDate || new Date()); // Pre-fill with selected or current date
+                setNewEventStartDate(selectedDate || new Date()); 
                 setNewEventEndDate(selectedDate || new Date());
                 setIsAddEventModalOpen(true);
                 setNewEventError(null);
@@ -606,7 +580,7 @@ END:VTODO
                   onClick={() => setSelectedDate(date)}
                   className={`h-32 border-r border-b border-gray-200 dark:border-gray-700 p-2 cursor-pointer transition-colors ${
                     isSelected ? 'bg-blue-50 dark:bg-blue-900/20' : ''
-                  } ${dayEvents.length > 0 && !isSelected ? 'bg-teal-50 dark:bg-teal-900/10' : ''}`} // Highlight for dates with events
+                  } ${dayEvents.length > 0 && !isSelected ? 'bg-teal-50 dark:bg-teal-900/10' : ''}`} 
                 >
                   <div className={`text-sm font-medium mb-1 ${
                     isTodayDate 
@@ -616,7 +590,7 @@ END:VTODO
                     {date.getDate()}
                   </div>
                   <div className="space-y-1 overflow-y-auto max-h-[60px]">
-                    {dayEvents.slice(0, 1).map((event) => ( // Show fewer events to make space for mark indicator
+                    {dayEvents.slice(0, 1).map((event) => ( 
                       <motion.div
                         key={event.id}
                         whileHover={{ scale: 1.02 }}
@@ -632,7 +606,7 @@ END:VTODO
                         {getMarkForDate(date).locked && <Lock size={10} className="ml-auto flex-shrink-0" />}
                       </div>
                     )}
-                    {dayEvents.length > 1 && !getMarkForDate(date) && ( // Adjust "more" count logic if needed
+                    {dayEvents.length > 1 && !getMarkForDate(date) && (
                       <div className="text-xs text-gray-500 dark:text-gray-400">
                         +{dayEvents.length - 1} more events
                       </div>
@@ -769,14 +743,14 @@ END:VTODO
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4"
-            onClick={() => setIsAddEventModalOpen(false)} // Close on overlay click
+            onClick={() => setIsAddEventModalOpen(false)} 
           >
             <motion.div
               initial={{ scale: 0.9, y: 20 }}
               animate={{ scale: 1, y: 0 }}
               exit={{ scale: 0.9, y: 20 }}
               className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-xl w-full max-w-lg border border-gray-200 dark:border-gray-700"
-              onClick={(e) => e.stopPropagation()} // Prevent closing when clicking inside modal
+              onClick={(e) => e.stopPropagation()}
             >
               <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mb-6">Add New Event</h2>
               <form onSubmit={handleAddNewEventSubmit} className="space-y-4">

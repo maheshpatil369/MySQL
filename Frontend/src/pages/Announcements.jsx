@@ -17,23 +17,19 @@ import {
   Info,
   CheckCircle,
   Loader2,
-  Newspaper, // Icon for news articles
-  RefreshCw // Icon for refresh button
+  Newspaper,
+  RefreshCw 
 } from 'lucide-react';
 import Layout from '../components/layout/Layout.jsx';
-// import { AuthContext } from '../contexts/AuthContext.jsx'; // Token might not be needed for public news API
 
 const NEWS_API_KEY = 'pub_b79fe12045c04eae8b454ffc7fe48668';
-const NEWS_API_URL_BASE = `https://newsdata.io/api/1/news?apikey=${NEWS_API_KEY}&language=en&country=in`; // Default to India, can be changed
+const NEWS_API_URL_BASE = `https://newsdata.io/api/1/news?apikey=${NEWS_API_KEY}&language=en&country=in`; 
 
 const Announcements = () => {
   const [newsArticles, setNewsArticles] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
-  // const [showCreateModal, setShowCreateModal] = useState(false); // Related to old modal
-
-  // const { token } = useContext(AuthContext); // Related to old backend
 
   const fetchNewsData = async () => {
     setIsLoading(true);
@@ -42,8 +38,7 @@ const Announcements = () => {
     if (searchTerm) {
       url += `&q=${encodeURIComponent(searchTerm)}`;
     }
-    // Removed custom cache-busting parameter '&t' as it might be causing API error
-    console.log(`Fetching news from URL: ${url}`); // Log the URL
+    console.log(`Fetching news from URL: ${url}`); 
 
     try {
       const response = await fetch(url);
@@ -73,7 +68,7 @@ const Announcements = () => {
   useEffect(() => {
     console.log("useEffect for fetchNewsData triggered. SearchTerm:", searchTerm);
     fetchNewsData();
-  }, [searchTerm]); // This effect runs on mount and when searchTerm changes.
+  }, [searchTerm]); 
 
   const formatDate = (dateString) => {
     if (!dateString) return 'N/A';
@@ -104,7 +99,7 @@ const Announcements = () => {
           <motion.button
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            onClick={fetchNewsData} // Call fetchNewsData directly
+            onClick={fetchNewsData}
             disabled={isLoading}
             className="mt-4 sm:mt-0 inline-flex items-center px-4 py-2 bg-blue-500 text-white rounded-lg font-medium hover:bg-blue-600 transition-all duration-200 shadow-sm disabled:opacity-70"
           >
@@ -118,10 +113,10 @@ const Announcements = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="flex flex-col sm:flex-row gap-4 items-center" // Added items-center
+          className="flex flex-col sm:flex-row gap-4 items-center" 
         >
           <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" /> {/* Centered icon */}
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" /> 
             <input
               type="text"
               placeholder="Search news articles..."
@@ -130,7 +125,6 @@ const Announcements = () => {
               className="w-full pl-10 pr-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
             />
           </div>
-          {/* Filter might not be applicable or would need different options for news */}
         </motion.div>
 
         {/* News Articles List */}
@@ -168,7 +162,7 @@ const Announcements = () => {
                       src={article.image_url} 
                       alt={article.title} 
                       className="w-full h-48 object-cover rounded-lg mb-4"
-                      onError={(e) => { e.target.onerror = null; e.target.style.display='none';}} // More robust error handling
+                      onError={(e) => { e.target.onerror = null; e.target.style.display='none';}}
                     />
                   )}
                   <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2 hover:text-blue-600 dark:hover:text-blue-400">
@@ -225,52 +219,6 @@ const Announcements = () => {
             </p>
           </motion.div>
         )}
-
-        {/* 
-        // Create Announcement Modal - Completely commented out for now
-        // If you need to re-enable it, ensure all related state and handlers are also uncommented and functional.
-        {showCreateModal && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4"
-            // onClick={() => setShowCreateModal(false)}
-          >
-            <motion.div
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              className="bg-white dark:bg-gray-800 rounded-xl p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto"
-              // onClick={(e) => e.stopPropagation()}
-            >
-              // <form onSubmit={handleCreateAnnouncement}> // handleCreateAnnouncement would need to be defined/uncommented
-                <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-6">
-                  Create New Announcement
-                </h3>
-                <div className="space-y-4">
-                  // Form fields here...
-                </div>
-                <div className="mt-6 flex justify-end space-x-3">
-                  <motion.button
-                    type="button"
-                    whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
-                    // onClick={() => setShowCreateModal(false)}
-                    className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-600"
-                  >
-                    Cancel
-                  </motion.button>
-                  <motion.button
-                    type="submit"
-                    whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
-                    className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700"
-                  >
-                    Publish Announcement
-                  </motion.button>
-                </div>
-              // </form>
-            </motion.div>
-          </motion.div>
-        )} 
-        */}
       </div>
     </Layout>
   );

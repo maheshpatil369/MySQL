@@ -13,14 +13,14 @@ import {
   Globe,
   Loader2, 
   AlertCircle, 
-  Plane, Train, Car, Utensils, Mountain, Camera, Waves, Music, Heart // For interests icons
+  Plane, Train, Car, Utensils, Mountain, Camera, Waves, Music, Heart 
 } from 'lucide-react';
 import Layout from '../components/layout/Layout.jsx';
 import { useAuth } from '../contexts/AuthContext';
-import { Link } from 'react-router-dom'; // For "New Trip" button
-import travelImage from '../components/images/travel.jpg'; // Import the travel image
+import { Link } from 'react-router-dom';
+import travelImage from '../components/images/travel.jpg'; 
 
-const API_TRIPS_URL = `${import.meta.env.VITE_API_URL || 'http://localhost:3001/api'}/events`; // Changed to /events
+const API_TRIPS_URL = `${import.meta.env.VITE_API_URL || 'http://localhost:3001/api'}/events`; 
 const API_EXPENSES_SUMMARY_URL = `${import.meta.env.VITE_API_URL || 'http://localhost:3001/api'}/expenses/user/summary`;
 
 const interestIcons = {
@@ -37,8 +37,8 @@ const Dashboard = () => {
   const [allTrips, setAllTrips] = useState([]);
   const [dashboardLoading, setDashboardLoading] = useState(true);
   const [dashboardError, setDashboardError] = useState(null);
-  const [expenseBalance, setExpenseBalance] = useState(0); // State for expense balance
-  const [uniqueLocationsVisitedCount, setUniqueLocationsVisitedCount] = useState(0); // State for unique locations
+  const [expenseBalance, setExpenseBalance] = useState(0); 
+  const [uniqueLocationsVisitedCount, setUniqueLocationsVisitedCount] = useState(0); 
 
   const [activeTrips, setActiveTrips] = useState([]);
   const [recentDisplayTrips, setRecentDisplayTrips] = useState([]);
@@ -55,7 +55,6 @@ const Dashboard = () => {
       setDashboardLoading(true);
       setDashboardError(null);
       try {
-        // Fetch trips and expense summary in parallel
         const [tripsResponse, expensesSummaryResponse] = await Promise.all([
           fetch(API_TRIPS_URL, { headers: { 'x-auth-token': token } }),
           fetch(API_EXPENSES_SUMMARY_URL, { headers: { 'x-auth-token': token } })
@@ -83,7 +82,6 @@ const Dashboard = () => {
         setAllTrips(mappedTripsData);
         console.log('Dashboard - Mapped Trips Data:', mappedTripsData);
 
-        // Calculate unique locations visited
         if (mappedTripsData && mappedTripsData.length > 0) {
           const uniqueEndCities = new Set(mappedTripsData.map(trip => trip.end_city?.toLowerCase().trim()).filter(city => city));
           setUniqueLocationsVisitedCount(uniqueEndCities.size);
@@ -110,7 +108,6 @@ const Dashboard = () => {
         }).sort((a, b) => new Date(a.start_date) - new Date(b.start_date));
         setRecentDisplayTrips(ongoingAndUpcomingTrips);
 
-        // Process expense summary
         if (!expensesSummaryResponse.ok) {
           const errorData = await expensesSummaryResponse.json().catch(() => ({}));
           throw new Error(errorData.msg || `Failed to fetch expense summary: ${expensesSummaryResponse.status}`);
@@ -299,7 +296,7 @@ const Dashboard = () => {
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.5 }} // Stagger animation
+                transition={{ delay: 0.5 }} 
                 className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 mt-8 lg:mt-0"
               >
                 <div className="p-6 border-b border-gray-200 dark:border-gray-700">
@@ -309,7 +306,7 @@ const Dashboard = () => {
                 </div>
                 <div className="p-6 space-y-4">
                   {activeTrips.map((trip) => {
-                    const cardImage = travelImage; // Use the imported travel image
+                    const cardImage = travelImage; 
                     const formatDate = (dateStr) => new Date(dateStr).toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
                     return (
                       <motion.div
