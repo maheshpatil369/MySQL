@@ -2,7 +2,6 @@ const { pool } = require('../config/db');
 
 const CalendarMark = {
   async createOrUpdate({ user_id, mark_date, text, is_locked }) {
-    // Try to insert, and on duplicate key (user_id, mark_date), update instead.
     const sql = `
       INSERT INTO calendar_marks (user_id, mark_date, text, is_locked)
       VALUES (?, ?, ?, ?)
@@ -13,7 +12,6 @@ const CalendarMark = {
     `;
     try {
       const [result] = await pool.query(sql, [user_id, mark_date, text, is_locked]);
-      // After insert or update, fetch the record to return its current state including ID
       const selectSql = 'SELECT * FROM calendar_marks WHERE user_id = ? AND mark_date = ?';
       const [rows] = await pool.query(selectSql, [user_id, mark_date]);
       return rows[0];
@@ -56,7 +54,6 @@ const CalendarMark = {
     }
   },
   
-  // Specific update for lock status, could also be part of createOrUpdate if text is not mandatory for lock
   async updateLockStatus(user_id, mark_date, is_locked) {
     const sql = 'UPDATE calendar_marks SET is_locked = ?, updated_at = CURRENT_TIMESTAMP WHERE user_id = ? AND mark_date = ?';
     try {
@@ -64,7 +61,7 @@ const CalendarMark = {
       if (result.affectedRows > 0) {
         return this.findByUserIdAndDate(user_id, mark_date);
       }
-      return null; // Or throw error if mark not found
+      return null;
     } catch (error) {
       console.error("Error in CalendarMark.updateLockStatus:", error);
       throw error;

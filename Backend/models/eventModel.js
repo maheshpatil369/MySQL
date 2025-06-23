@@ -31,7 +31,6 @@ const eventSchema = new mongoose.Schema({
     type: String,
     trim: true,
   },
-  // Add any other fields you might need, e.g., color, attendees
 }, { timestamps: true });
 
 module.exports = mongoose.model('Event', eventSchema);

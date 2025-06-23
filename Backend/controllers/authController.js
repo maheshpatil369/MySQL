@@ -328,7 +328,6 @@ exports.updateUserProfile = async (req, res) => {
     }
     const updatedUser = updatedUsers[0];
 
-    // Generate a new token. Keep payload concise or update if frontend relies on more JWT data.
     const newToken = jwt.sign(
       { id: updatedUser.id, name: updatedUser.name, email: updatedUser.email },
       JWT_SECRET,
@@ -338,13 +337,13 @@ exports.updateUserProfile = async (req, res) => {
     res.json({
       success: true,
       token: newToken,
-      user: updatedUser, // Return the full updated user object
+      user: updatedUser,
       msg: 'Profile updated successfully'
     });
 
   } catch (err) {
     console.error('Server error during profile update:', err.message);
-    if (err.code === 'ER_DUP_ENTRY' && err.message.includes('email')) { // Be more specific if email update is added
+    if (err.code === 'ER_DUP_ENTRY' && err.message.includes('email')) { 
         return res.status(400).json({ msg: 'Email already exists.' });
     }
     res.status(500).json({ msg: 'Server error', error: err.message });

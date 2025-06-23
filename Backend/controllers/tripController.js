@@ -110,7 +110,6 @@ exports.getMyTrips = async (req, res) => {
             parsedInterests = [String(parsedInterests)];
           }
         } catch (e) {
-          // If JSON.parse fails, assume it might be a comma-separated string
           if (typeof trip.interests === 'string') {
             parsedInterests = trip.interests.split(',').map(s => s.trim()).filter(s => s);
           } else {
@@ -134,7 +133,7 @@ exports.getMyTrips = async (req, res) => {
 // Get a specific trip by ID
 exports.getTripById = async (req, res) => {
   const tripId = req.params.id;
-  const userId = req.user.id; // To ensure user can only access their own trips
+  const userId = req.user.id; 
 
   try {
     const [trips] = await pool.execute(
@@ -147,7 +146,6 @@ exports.getTripById = async (req, res) => {
     }
     
     const trip = trips[0];
-    // Safely parse interests JSON string back to array
     let parsedInterests = [];
     if (trip.interests) {
       try {
@@ -156,7 +154,6 @@ exports.getTripById = async (req, res) => {
           parsedInterests = [String(parsedInterests)];
         }
       } catch (e) {
-        // If JSON.parse fails, assume it might be a comma-separated string
         if (typeof trip.interests === 'string') {
           parsedInterests = trip.interests.split(',').map(s => s.trim()).filter(s => s);
         } else {

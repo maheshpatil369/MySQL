@@ -53,7 +53,7 @@ const createEvent = asyncHandler(async (req, res) => {
   console.log('Backend CONTROLLER: Query parameters:', JSON.stringify([userId, title, formattedStart, formattedEnd, allDay || false, description, location, dbDistance], null, 2));
 
   try {
-    const [result] = await pool.query(query, [userId, title, formattedStart, formattedEnd, allDay || false, description, location, dbDistance]); // Used dbDistance
+    const [result] = await pool.query(query, [userId, title, formattedStart, formattedEnd, allDay || false, description, location, dbDistance]); 
 
     if (result.affectedRows === 1) {
       const insertId = result.insertId;
@@ -67,28 +67,21 @@ const createEvent = asyncHandler(async (req, res) => {
         res.status(201).json(newEventResult[0]);
       } else {
         console.error(`Backend CONTROLLER: Event created (ID: ${insertId}) but failed to fetch the new event details. newEventResult length: ${newEventResult ? newEventResult.length : 'undefined/null'}.`);
-        // This is an inconsistency, but the event was created.
-        // Decide on appropriate response. For now, sending 201 with minimal info.
         res.status(201).json({ id: insertId, message: "Event created, but full details could not be retrieved." });
       }
     } else {
       console.error('Backend CONTROLLER: Failed to create event in DB - no rows affected or unexpected result. Result:', result);
-      // Create a new error to ensure it's passed to the error handler
       const creationError = new Error('Failed to create event in database.');
-      creationError.status = 500; // Optional: set a status for the error object
-      throw creationError; // This should be caught by asyncHandler
+      creationError.status = 500; 
+      throw creationError; 
     }
   } catch (dbError) {
     console.error('Backend CONTROLLER: DATABASE ERROR during event creation:', dbError);
-    // Pass the error to the next error-handling middleware.
-    // asyncHandler relies on errors being thrown or passed to next().
     throw dbError; // Re-throw the error to be caught by asyncHandler
   }
 });
 
-// @desc    Get a single event
-// @route   GET /api/events/:id
-// @access  Private
+
 const getEventById = asyncHandler(async (req, res) => {
   const eventId = req.params.id;
   const userId = req.user.id;
@@ -110,9 +103,7 @@ const getEventById = asyncHandler(async (req, res) => {
   res.status(200).json(event);
 });
 
-// @desc    Update an event
-// @route   PUT /api/events/:id
-// @access  Private
+
 const updateEvent = asyncHandler(async (req, res) => {
   const eventId = req.params.id;
   const userId = req.user.id;
@@ -141,10 +132,7 @@ const updateEvent = asyncHandler(async (req, res) => {
     const [updatedEvent] = await pool.query('SELECT id, user_id, title, start_time AS start, end_time AS end, all_day AS allDay, description, location, distance, created_at, updated_at FROM events WHERE id = ?', [eventId]);
     res.status(200).json(updatedEvent[0]);
   } else {
-    // This case might indicate the event wasn't found, though we check above.
-    // Or, no fields were actually changed.
-    // For simplicity, we'll assume if affectedRows is 0 and no error, the data was the same.
-    // To be more robust, one might re-fetch and compare.
+   
     const [currentEvent] = await pool.query('SELECT id, user_id, title, start_time AS start, end_time AS end, all_day AS allDay, description, location, distance, created_at, updated_at FROM events WHERE id = ?', [eventId]);
     res.status(200).json(currentEvent[0]);
   }
@@ -175,7 +163,7 @@ const deleteEvent = asyncHandler(async (req, res) => {
   if (result.affectedRows === 1) {
     res.status(200).json({ id: eventId, message: 'Event removed' });
   } else {
-    res.status(404); // Or 500 if it should have been deleted
+    res.status(404); 
     throw new Error('Event not found or could not be deleted');
   }
 });

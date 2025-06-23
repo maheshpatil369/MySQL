@@ -1,6 +1,5 @@
 const { pool } = require('../config/db');
 
-// Helper function to create expenses table if it doesn't exist
 async function createExpensesTableIfNotExists() {
   const createTableQuery = `
     CREATE TABLE IF NOT EXISTS expenses (
@@ -20,14 +19,12 @@ async function createExpensesTableIfNotExists() {
   try {
     const [rows, fields] = await pool.execute(createTableQuery);
     if (rows.warningStatus === 0) {
-      // console.log("Expenses table checked/created successfully.");
     }
   } catch (error) {
     console.error('Error creating expenses table:', error);
   }
 }
 
-// Call this function once when the module is loaded
 createExpensesTableIfNotExists();
 
 // Add a new expense or income
@@ -79,7 +76,6 @@ exports.getExpensesByTrip = async (req, res) => {
   }
 };
 
-// Get all expenses for the logged-in user (can be filtered by type or date range later)
 exports.getAllUserExpenses = async (req, res) => {
     const userId = req.user.id;
     try {
@@ -95,7 +91,6 @@ exports.getAllUserExpenses = async (req, res) => {
 };
 
 
-// Get expense summary for a specific trip (total credit, debit, balance)
 exports.getTripExpenseSummary = async (req, res) => {
   const { tripId } = req.params;
   const userId = req.user.id;
