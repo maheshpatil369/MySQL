@@ -3,7 +3,6 @@
   "version": "1.0.0",
   "description": "Backend server for TripManager-Pro using Node.js, Express, and MySQL",
   "main": "server.js",
-  "type": "module",
   "scripts": {
     "dev": "nodemon server.js",
     "start": "node server.js"

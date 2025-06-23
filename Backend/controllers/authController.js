@@ -133,7 +133,6 @@ require('dotenv').config();
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
-// Create users table if not exists
 async function createUserTableIfNotExists() {
   const createTableQuery = `
     CREATE TABLE IF NOT EXISTS users (
@@ -152,7 +151,6 @@ async function createUserTableIfNotExists() {
     await pool.execute(createTableQuery);
     console.log('✅ Users table structure base checked/created.');
 
-    // Check and add missing columns
     const columnsToAdd = [
       { name: 'phone', definition: 'VARCHAR(20) NULL' },
       { name: 'location', definition: 'VARCHAR(255) NULL' },
@@ -160,7 +158,6 @@ async function createUserTableIfNotExists() {
       { name: 'avatar_url', definition: 'VARCHAR(2048) NULL' }
     ];
 
-    // Get current database name
     const [dbNameRows] = await pool.query('SELECT DATABASE() as dbName;');
     const dbName = dbNameRows[0].dbName;
 
@@ -266,13 +263,12 @@ exports.loginUser = async (req, res) => {
       JWT_SECRET,
       { expiresIn: '1h' }
     );
-    // User object already contains all fields from SELECT *
-    const { password: _, ...userWithoutPassword } = user; // Exclude password from response
+    const { password: _, ...userWithoutPassword } = user; 
 
     res.json({
       success: true,
       token,
-      user: userWithoutPassword, // Return full user object (excluding password)
+      user: userWithoutPassword, 
       msg: 'Logged in successfully'
     });
 
@@ -290,7 +286,7 @@ exports.updateUserProfile = async (req, res) => {
   let updateFields = [];
   let queryParams = [];
 
-  if (name !== undefined) { // Allow empty string to clear name, but usually name is required
+  if (name !== undefined) {
     updateFields.push('name = ?');
     queryParams.push(name);
   }
